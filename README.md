@@ -1,37 +1,121 @@
-# Protótipo Reservas FIAP
+Sistema de Reservas FIAP
 
-Este é um protótipo de sistema de reservas de salas para a FIAP, desenvolvido em Python com interface gráfica utilizando customtkinter.
+Aplicativo Desktop para Gestão de Espaços Acadêmicos
 
-## Funcionalidades
-- Login com e-mail institucional
-- Seleção de sala e data/horário
-- Verificação de conflitos de reserva
-- Confirmação visual integrada ao app
-- Banco de dados SQLite local
+O sistema Reservas FIAP é uma solução desktop desenvolvida para otimizar o agendamento de salas de aula e espaços acadêmicos. Com foco em usabilidade e uma abordagem Mobile-first adaptada para o desktop, o aplicativo centraliza a gestão de infraestrutura, eliminando conflitos de horários e automatizando a confirmação via e-mail.
 
-## Como rodar
-1. Crie um ambiente virtual Python e ative-o:
-   ```sh
-   python -m venv .venv
-   .venv\Scripts\activate  # Windows
-   ```
-2. Instale as dependências:
-   ```sh
-   pip install customtkinter tkcalendar pillow
-   ```
-3. Execute o sistema:
-   ```sh
-   python Interface Front-end.py
-   ```
+👥 Integrantes - Grupo 1º Checkpoint
 
-## Estrutura
-- `Interface Front-end.py`: Interface gráfica e lógica principal
-- `Servicos_Reservas.py`: Funções de banco de dados e notificações
+Guilherme Torres da Silva – RM557712
 
-## Observações
-- O banco de dados é criado automaticamente na primeira execução.
-- O arquivo `.gitignore` já está configurado para ignorar arquivos sensíveis e temporários.
+Luis Fernando Picarelli Gonçalves Guariglia – RM555458
 
----
+Vinícius Barros Souza – RM558818
 
-Desenvolvido para fins acadêmicos na FIAP.
+Alexandre Caus Haddade – RM556150
+
+Mário Secundino Santana Lopes Portella – RM555321
+
+✨ Funcionalidades
+
+🔐 Autenticação Segura: Login validado apenas para domínios @fiap.com.br.
+
+📅 Agendamento Visual: Calendário interativo para seleção de datas e horários (07:00 às 22:00).
+
+🏢 Grade de Salas: Gestão de espaços do 2º ao 9º andar (salas 201 a 903).
+
+🛡️ Prevenção de Conflitos: Validação em tempo real para evitar reservas duplicadas no mesmo horário/sala.
+
+📧 Notificação Automática: Envio de e-mail de confirmação via protocolo SMTP.
+
+🎨 Interface Moderna: UI construída com customtkinter seguindo a identidade visual da FIAP.
+
+🛠️ Tecnologias e Arquitetura
+
+O projeto segue um padrão de separação de responsabilidades (Front-end e Back-end):
+
+Linguagem: Python 3.10+
+
+Interface Gráfica: CustomTkinter, tkcalendar, Pillow.
+
+Banco de Dados: SQLite3 (Persistência local).
+
+Comunicação: smtplib (Protocolo de e-mail).
+
+🚀 Como Executar o Projeto
+
+1. Preparar Ambiente
+
+Recomendamos o uso de um ambiente virtual para isolar as dependências:
+
+# Criar ambiente virtual
+python -m venv .venv
+
+# Ativar no Windows
+.venv\Scripts\activate
+
+# Ativar no Linux/Mac
+source .venv/bin/activate
+
+
+2. Instalar Dependências
+
+pip install customtkinter tkcalendar pillow
+
+
+3. Rodar a Aplicação
+
+python interface_reservas.py
+
+
+(Nota: O banco de dados SQLite será criado automaticamente na primeira execução).
+
+📂 Estrutura do Projeto
+
+interface_reservas.py: Contém a classe principal da interface, lógica de navegação e modais de feedback.
+
+Servicos_Reservas.py: Camada de serviço responsável pelas queries SQL, validação de disponibilidade e envio de e-mails.
+
+dados_agendamentos_fiap.db: Banco de dados gerado localmente.
+
+🗄️ Estrutura da Tabela de Dados (agendamentos)
+
+Campo
+
+Tipo
+
+Descrição
+
+identificador
+
+INTEGER
+
+Chave Primária (Auto-incremento).
+
+conta_usuario
+
+TEXT
+
+E-mail do solicitante.
+
+numero_sala
+
+TEXT
+
+Número da sala reservada.
+
+data_horario
+
+TEXT
+
+Concatenação de Data e Hora da reserva.
+
+registro_tempo
+
+TIMESTAMP
+
+Data/hora de criação do registro.
+
+📝 Licença
+
+Este projeto foi desenvolvido para fins estritamente acadêmicos como parte da disciplina de Engenharia de Software na FIAP.
