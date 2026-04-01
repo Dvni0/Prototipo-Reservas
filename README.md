@@ -6,11 +6,11 @@ O sistema **Reservas FIAP** é uma solução desktop desenvolvida para otimizar 
 
 ## **👥 Integrantes \- Grupo 1º Checkpoint**
 
-* **Guilherme Torres da Silva** – RM557712  
-* **Luis Fernando Picarelli Gonçalves Guariglia** – RM555458  
-* **Vinícius Barros Souza** – RM558818  
-* **Alexandre Caus Haddade** – RM556150  
-* **Mário Secundino Santana Lopes Portella** – RM555321
+* **Guilherme Torres da Silva** 
+* **Luis Fernando Picarelli Gonçalves Guariglia** 
+* **Vinícius Barros Souza**  
+* **Alexandre Caus Haddade** 
+* **Mário Secundino Santana Lopes Portella** 
 
 ## **✨ Funcionalidades**
 
