@@ -5,7 +5,8 @@ from tkcalendar import Calendar
 from PIL import Image
 import os
 import datetime
-from Servicos_Reservas import configurar_banco_dados, inserir_registro_reserva, notificar_usuario_email, reserva_existe
+# Importações atualizadas para incluir as novas funções de registro e login
+from Servicos_Reservas import configurar_banco_dados, inserir_registro_reserva, notificar_usuario_email, reserva_existe, registrar_usuario, validar_login
 
 COR_PRINCIPAL = "#ED145B"
 COR_SECUNDARIA = "#C20D47"
@@ -30,6 +31,7 @@ class ReservasFIAP(ctk.CTk):
         label.pack(pady=(18, 10), padx=10)
         botao = ctk.CTkButton(frame, text="OK", fg_color="white", text_color=cor, hover_color="#fce8ef", corner_radius=10, width=80, command=popup.destroy)
         botao.pack(pady=(0, 10))
+
     def __init__(self):
         super().__init__()
         self.title("Reservas FIAP")
@@ -59,7 +61,8 @@ class ReservasFIAP(ctk.CTk):
 
         self.painel_acesso = ctk.CTkFrame(self, corner_radius=20, fg_color="white")
         self.painel_acesso.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.painel_acesso.grid_rowconfigure((0,6), weight=1)
+        # Ajustado para (0,7) para acomodar o botão extra de cadastro
+        self.painel_acesso.grid_rowconfigure((0,7), weight=1)
         self.painel_acesso.grid_columnconfigure(0, weight=1)
 
         if self.imagem_marca:
@@ -78,10 +81,18 @@ class ReservasFIAP(ctk.CTk):
         self.campo_seguranca = ctk.CTkEntry(self.painel_acesso, width=240, placeholder_text="Chave de Segurança", show="*", height=38)
         self.campo_seguranca.grid(row=4, column=0, pady=(0, 16), padx=10, sticky="ew")
 
+        # Botão de Autenticação atualizado
         botao_autenticar = ctk.CTkButton(self.painel_acesso, text="Realizar login", width=240, height=48, 
                          fg_color=COR_PRINCIPAL, hover_color=COR_SECUNDARIA, font=ctk.CTkFont(size=16, weight="bold"),
                          corner_radius=12, command=self.verificar_credenciais)
-        botao_autenticar.grid(row=5, column=0, pady=(0, 30), padx=10, sticky="ew")
+        botao_autenticar.grid(row=5, column=0, pady=(0, 10), padx=10, sticky="ew")
+
+        # NOVO: Botão de cadastro
+        botao_cadastrar = ctk.CTkButton(self.painel_acesso, text="Cadastrar-se", width=240, height=48, 
+                         fg_color="transparent", hover_color="#fce8ef", text_color=COR_PRINCIPAL, 
+                         border_width=2, border_color=COR_PRINCIPAL, font=ctk.CTkFont(size=16, weight="bold"),
+                         corner_radius=12, command=self.registrar_nova_conta)
+        botao_cadastrar.grid(row=6, column=0, pady=(0, 30), padx=10, sticky="ew")
 
     def verificar_credenciais(self):
         texto_identificacao = self.campo_identificacao.get().strip().lower()
@@ -91,11 +102,39 @@ class ReservasFIAP(ctk.CTk):
             messagebox.showwarning("Atenção", "Forneça os dados de acesso completos!")
             return
 
-        if "@fiap.com.br" in texto_identificacao:
+        # Verifica se o e-mail pertence à FIAP
+        if not texto_identificacao.endswith("@fiap.com.br"):
+            messagebox.showerror("Falha na Autenticação", "Utilize uma credencial válida da instituição (@fiap.com.br).")
+            return
+
+        # Verifica no banco de dados se a senha bate com o e-mail
+        if validar_login(texto_identificacao, texto_seguranca):
             self.conta_ativa = texto_identificacao
             self.exibir_painel_salas()
         else:
-            messagebox.showerror("Falha na Autenticação", "Utilize uma credencial válida da instituição (@fiap.com.br).")
+            messagebox.showerror("Falha na Autenticação", "E-mail não cadastrado ou senha incorreta.")
+
+    # NOVA FUNÇÃO: Lida com o cadastro do usuário
+    def registrar_nova_conta(self):
+        texto_identificacao = self.campo_identificacao.get().strip().lower()
+        texto_seguranca = self.campo_seguranca.get()
+
+        if not texto_identificacao or not texto_seguranca:
+            messagebox.showwarning("Atenção", "Preencha o e-mail e a senha que deseja cadastrar!")
+            return
+
+        if not texto_identificacao.endswith("@fiap.com.br"):
+            messagebox.showerror("Erro no Cadastro", "Apenas e-mails institucionais (@fiap.com.br) são permitidos.")
+            return
+
+        # Tenta registrar no banco
+        sucesso = registrar_usuario(texto_identificacao, texto_seguranca)
+        
+        if sucesso:
+            self.mostrar_mensagem("Conta criada com sucesso! Você já pode fazer o login.", tipo="info")
+            self.campo_seguranca.delete(0, 'end') # Limpa a senha por segurança
+        else:
+            messagebox.showerror("Erro no Cadastro", "Este e-mail já possui cadastro no sistema.")
 
     def exibir_painel_salas(self):
         self.apagar_elementos_tela()
@@ -226,6 +265,7 @@ class ReservasFIAP(ctk.CTk):
             elemento_visual.destroy()
 
 if __name__ == "__main__":
+    # Garante que o banco e as tabelas estejam criados ao abrir o sistema
     configurar_banco_dados()
     sistema_principal = ReservasFIAP()
     sistema_principal.mainloop()

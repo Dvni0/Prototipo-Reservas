@@ -1,10 +1,3 @@
-def reserva_existe(numero_sala, data_horario):
-    conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
-    ponteiro_bd = conexao_bd.cursor()
-    ponteiro_bd.execute('SELECT 1 FROM agendamentos WHERE numero_sala = ? AND data_horario = ?', (numero_sala, data_horario))
-    existe = ponteiro_bd.fetchone() is not None
-    conexao_bd.close()
-    return existe
 import sqlite3
 import smtplib
 from email.mime.text import MIMEText
@@ -13,6 +6,8 @@ from email.mime.multipart import MIMEMultipart
 def configurar_banco_dados():
     conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
     ponteiro_bd = conexao_bd.cursor()
+    
+    # Tabela original de agendamentos
     ponteiro_bd.execute('''
         CREATE TABLE IF NOT EXISTS agendamentos (
             identificador INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,8 +17,26 @@ def configurar_banco_dados():
             registro_tempo TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
+    
+    # NOVA tabela de usuários
+    ponteiro_bd.execute('''
+        CREATE TABLE IF NOT EXISTS usuarios (
+            identificador INTEGER PRIMARY KEY AUTOINCREMENT,
+            email TEXT UNIQUE NOT NULL,
+            senha TEXT NOT NULL
+        )
+    ''')
+    
     conexao_bd.commit()
     conexao_bd.close()
+
+def reserva_existe(numero_sala, data_horario):
+    conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
+    ponteiro_bd = conexao_bd.cursor()
+    ponteiro_bd.execute('SELECT 1 FROM agendamentos WHERE numero_sala = ? AND data_horario = ?', (numero_sala, data_horario))
+    existe = ponteiro_bd.fetchone() is not None
+    conexao_bd.close()
+    return existe
 
 def inserir_registro_reserva(conta_usuario, numero_sala, dia_escolhido):
     conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
@@ -52,3 +65,26 @@ def notificar_usuario_email(endereco_email, numero_sala, dia_escolhido):
     except Exception as erro_execucao:
         print(f"[SERVIÇOS] Falha na notificação: {erro_execucao}")
         return False
+
+# NOVAS FUNÇÕES: Lógica de autenticação e cadastro de usuários
+def registrar_usuario(email, senha):
+    conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
+    ponteiro_bd = conexao_bd.cursor()
+    try:
+        ponteiro_bd.execute('INSERT INTO usuarios (email, senha) VALUES (?, ?)', (email, senha))
+        conexao_bd.commit()
+        sucesso = True
+    except sqlite3.IntegrityError:
+        # Se cair aqui, é porque o e-mail já existe (devido ao UNIQUE na tabela)
+        sucesso = False 
+    finally:
+        conexao_bd.close()
+    return sucesso
+
+def validar_login(email, senha):
+    conexao_bd = sqlite3.connect('dados_agendamentos_fiap.db')
+    ponteiro_bd = conexao_bd.cursor()
+    ponteiro_bd.execute('SELECT 1 FROM usuarios WHERE email = ? AND senha = ?', (email, senha))
+    existe = ponteiro_bd.fetchone() is not None
+    conexao_bd.close()
+    return existe
