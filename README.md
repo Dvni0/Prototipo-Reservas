@@ -89,7 +89,7 @@ O grande diferencial é a **experiência de usuário (UX) convergente**, que tra
 A arquitetura modular garante que o sistema seja escalável, permitindo adicionar novos prédios ou integração com APIs de calendários externos (como Google Calendar) futuramente, sem a necessidade de reescrever o código base.
 
 ## 🎬 Demonstração
-*(Espaço reservado para inclusão de vídeo/prints do sistema em funcionamento)*
+
 [https://www.youtube.com/watch?v=Lkjn4f7PVAM&feature=youtu.be](https://www.youtube.com/watch?v=Lkjn4f7PVAM&feature=youtu.be)
 
 ## 👥 Integrantes do Grupo
