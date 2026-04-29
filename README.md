@@ -90,6 +90,7 @@ A arquitetura modular garante que o sistema seja escalável, permitindo adiciona
 
 ## 🎬 Demonstração
 *(Espaço reservado para inclusão de vídeo/prints do sistema em funcionamento)*
+[https://www.youtube.com/watch?v=Lkjn4f7PVAM&feature=youtu.be](https://www.youtube.com/watch?v=Lkjn4f7PVAM&feature=youtu.be)
 
 ## 👥 Integrantes do Grupo
 * **Guilherme Torres da Silva**
