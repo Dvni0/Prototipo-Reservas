@@ -103,6 +103,10 @@ class ReservasFIAP(ctk.CTk):
             messagebox.showwarning("Atenção", "Preencha o e-mail e a senha que deseja cadastrar!")
             return
 
+        if "@" not in email or not email.endswith("@fiap.com.br"):
+            messagebox.showerror("Erro de Cadastro", "Utilize uma credencial válida da instituição (@fiap.com.br).")
+            return
+
         #Classe usuario
         usuario = Usuario(email, senha)
         if usuario.registrar_usuario():
@@ -114,10 +118,12 @@ class ReservasFIAP(ctk.CTk):
     def exibir_painel_salas(self):
         self.apagar_elementos_tela()
 
-        area_conteudo = ctk.CTkFrame(self, corner_radius=0, fg_color=COR_FUNDO)
-        area_conteudo.grid(row=1, column=0, columnspan=2, sticky="nsew")
-        self.grid_rowconfigure(1, weight=1)
+        self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        
+        area_conteudo = ctk.CTkFrame(self, corner_radius=0, fg_color=COR_FUNDO)
+        area_conteudo.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        
 
         lista_espacos = [f"{p}{i:02d}" for p in range(2, 10) for i in range(1, 4)]
         area_rolagem = ctk.CTkScrollableFrame(area_conteudo, fg_color="transparent")
@@ -156,8 +162,11 @@ class ReservasFIAP(ctk.CTk):
         reserva = Reserva(sala, data_hora, self.conta_ativa)
         reserva.inserir_registro_reserva()
         reserva.notificar_usuario_email()
-        self.mostrar_mensagem(f"Sala {sala} reservada!", tipo="info")
         self.exibir_painel_salas()
+        self.mostrar_mensagem(f"Sala {sala} reservada!", tipo="info")
+        
 
     def apagar_elementos_tela(self):
         for child in self.winfo_children(): child.destroy()
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=0)
